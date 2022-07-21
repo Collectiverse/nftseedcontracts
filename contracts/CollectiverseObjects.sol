@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "./OperatorRole.sol";
+// Add a reference to the elements contract
 
 contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole {
     using StringsUpgradeable for uint256;
@@ -46,14 +47,30 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole {
 
     }
 
-    function mintObject(address _owner, bytes memory data)
+    ///1. Pre-mine (lazy mint), mine the object and a random element 
+    function mintObject(address _owner, string memory _objectMetaData, string memory _randmomElementMetaData, bytes memory data)
         external
         
     {
+        /* _randmomElementMetaData = {
+            name: "Carbon"
+        }*/
+
+        /* _objectMetaData = {
+            attributes: {
+                carbon: 1bt
+                hydrogen: 1tt
+            }
+        }*/
         
-        _mint(msg.sender, _id, ,data);
+        require(msg.value == miningFee * qty * time);
+
+        _mint(msg.sender, _id, 1,data);
+        CollectiverseElements(addr).mine()
         emit NewPlanetMinted(0, _owner);
     }
+
+    
 
     function updateBaseUri(string calldata base) external onlyOperator {
         baseURI = base;
