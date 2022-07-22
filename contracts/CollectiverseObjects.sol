@@ -54,9 +54,7 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole {
         payable
         returns (uint256)
     {
-        // checking the signature
-        // tbd
-        // require(signer ==, "signer is not valid");
+        // tbd - checking the signature
 
         // maximum objects reached
         require(count < maximumObjects, "maximum number of objects reached");
@@ -67,6 +65,7 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole {
         usedVouchers[_voucher.id] = 1;
 
         // check if enough was paid
+        // tbd - change to usdc (erc20)
         require(msg.value >= _voucher.price, "insufficient payment to redeem");
 
         // adding the elements to the object
