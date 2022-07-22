@@ -5,99 +5,135 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "./OperatorRole.sol";
-// Add a reference to the elements contract
+
+import "./CollectiverseElements.sol";
 
 contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole {
-    using StringsUpgradeable for uint256;
+    address public elements;
+    // object - element - amount
+    mapping(uint256 => mapping(uint256 => uint256)) public minableElements;
+    // element - amount
+    mapping(uint256 => uint256) public minableSupply;
 
-    string public name;
-    string public symbol;
-    string private baseURI;
-    address private settings;
+    uint256 public count = 0;
+    uint256 public maximumObjects;
 
-    //mapping(address => address) public planetVerseToVault;
-    uint256 public count;
-    uint256 private _totalSupply;
+    mapping(uint256 => uint256) public usedVouchers;
+    struct Voucher {
+        uint256 id;
+        uint256 price;
+        uint256[] elementIds;
+        uint256[] elementAmounts;
+        uint256 preminedId;
+        bytes signature;
+    }
+    address public signer;
 
-
-    using CountersUpgradeable for CountersUpgradeable.Counter;
-    CountersUpgradeable.Counter private _tokenIds;
-
-    event NewPlanetMinted(uint256 newItemId, address _owner);
+    event ObjectMinted(uint256 id, address owner);
     event UpdatedURI(string uri);
 
     function initialize(
-        string memory _metaDataUri,
-        string memory _name,
-        string memory _symbol,
-        uint256 _startingSupply,
-        address _settings
-    ) public initializer {   
-
+        string memory _uri,
+        uint256 _supply,
+        address _elements,
+        address _signer
+    ) public initializer {
         __OperatorRole_init();
-        __ERC1155_init(_metaDataUri);
+        __ERC1155_init(_uri);
 
-        name = _name;
-        symbol = _symbol;
-         _totalSupply = _startingSupply;
-
-         settings = _settings;
-         count = 0;
-
+        maximumObjects = _supply;
+        elements = _elements;
+        signer = _signer;
     }
 
-    ///1. Pre-mine (lazy mint), mine the object and a random element 
-    function mintObject(address _owner, string memory _objectMetaData, string memory _randmomElementMetaData, bytes memory data)
+    // handling of minting
+    function mintObject(address _owner, Voucher calldata _voucher)
         external
-        
+        payable
+        returns (uint256)
     {
-        /* _randmomElementMetaData = {
-            name: "Carbon"
-        }*/
+        // checking the signature
+        // tbd
+        // require(signer ==, "signer is not valid");
 
-        /* _objectMetaData = {
-            attributes: {
-                carbon: 1bt
-                hydrogen: 1tt
-            }
-        }*/
-        
-        require(msg.value == miningFee * qty * time);
+        // maximum objects reached
+        require(count < maximumObjects, "maximum number of objects reached");
+        count += 1;
 
-        _mint(msg.sender, _id, 1,data);
-        CollectiverseElements(addr).mine()
-        emit NewPlanetMinted(0, _owner);
+        // check for unused voucher
+        require(usedVouchers[_voucher.id] == 0, "element already minted");
+        usedVouchers[_voucher.id] = 1;
+
+        // check if enough was paid
+        require(msg.value >= _voucher.price, "insufficient payment to redeem");
+
+        // adding the elements to the object
+        require(
+            _voucher.elementIds.length == _voucher.elementAmounts.length,
+            "Ids and Amounts must have the same length"
+        );
+        for (uint256 i = 0; i < _voucher.elementIds.length; i++) {
+            _setMinableElement(
+                _voucher.id,
+                _voucher.elementIds[i],
+                _voucher.elementAmounts[i]
+            );
+        }
+
+        // premining element
+        if (minableElements[_voucher.id][_voucher.preminedId] > 0) {
+            CollectiverseElements(elements).mintElement(
+                _owner,
+                _voucher.preminedId,
+                minableElements[_voucher.id][_voucher.preminedId]
+            );
+            _setMinableElement(_voucher.id, _voucher.preminedId, 0);
+        }
+
+        // mint the object
+        _mint(_owner, _voucher.id, 1, "");
+        emit ObjectMinted(_voucher.id, _owner);
+
+        return _voucher.id;
     }
 
-    
-
-    function updateBaseUri(string calldata base) external onlyOperator {
-        baseURI = base;
-
-        emit UpdatedURI(baseURI);
+    // minable elements management
+    function setMinableElement(
+        uint256 _objectId,
+        uint256 _elementId,
+        uint256 _amount
+    ) external onlyOperator {
+        _setMinableElement(_objectId, _elementId, _amount);
     }
 
-    function uri(uint256 id) public view override returns (string memory) {
-        return
-            bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, id.toString()))
-                : baseURI;
+    function _setMinableElement(
+        uint256 _objectId,
+        uint256 _elementId,
+        uint256 _amount
+    ) internal {
+        // calculating element supply
+        minableSupply[_elementId] += (_amount -
+            minableElements[_objectId][_elementId]);
+
+        minableElements[_objectId][_elementId] = _amount;
     }
 
-    function totalElementSupply() public view virtual returns (uint256) {
-        return _totalSupply;
+    // management functions
+    function withdrawAll() external onlyOperator {
+        payable(msg.sender).transfer(address(this).balance);
     }
 
-    function _beforeTokenTransfer(
-        address operator,
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal virtual override {
-        require(ids.length == 1, "too long");
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    function setURI(string calldata _uri) external onlyOperator {
+        _setURI(_uri);
+    }
+
+    function setSigner(address _signer) external onlyOperator {
+        signer = _signer;
+    }
+
+    function setMaximumObjects(uint256 _maximumObjects) external onlyOperator {
+        maximumObjects = _maximumObjects;
     }
 }
