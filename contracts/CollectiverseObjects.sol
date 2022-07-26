@@ -9,13 +9,22 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "./OperatorRole.sol";
 
 import "./CollectiverseElements.sol";
 
-contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole, EIP712Upgradeable {
-    using ECDSAUpgradeable for bytes32;
+import "hardhat/console.sol";
 
+contract CollectiverseObjects is
+    ERC1155Upgradeable,
+    OperatorRole,
+    EIP712Upgradeable
+{
+    using ECDSAUpgradeable for bytes32;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+
+    // eip712 domain separator
     string private constant SIGNATURE_VERSION = "1";
     string private signDomain;
 
@@ -25,7 +34,7 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole, EIP712Upgrade
     // element - amount
     mapping(uint256 => uint256) public minableSupply;
 
-    uint256 public count = 0;
+    uint256 public count;
     uint256 public maximumObjects;
 
     mapping(uint256 => uint256) public usedVouchers;
@@ -39,6 +48,9 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole, EIP712Upgrade
     }
     address public signer;
 
+    address public erc20;
+    address public wallet;
+
     event ObjectMinted(uint256 id, address owner);
     event UpdatedURI(string uri);
 
@@ -47,48 +59,59 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole, EIP712Upgrade
         uint256 _supply,
         address _elements,
         address _signer,
+        address _erc20,
+        address _wallet,
         string memory _signDomain
     ) public initializer {
-
         /*
-        * Initialization of the EIP721 signature formats
-        * the signdomain can be unique, but in this case we are passing as initializer variable
-        * We have to make a choice to keep it or to change to a Const
-        */
+         * Initialization of the EIP721 signature formats
+         * the signdomain can be unique, but in this case we are passing as initializer variable
+         * We have to make a choice to keep it or to change to a Const
+         */
         __EIP712_init(_signDomain, SIGNATURE_VERSION);
 
         __OperatorRole_init();
         __ERC1155_init(_uri);
 
-        /* 
-        * Sign domain var for later use.
-        */
+        /*
+         * Sign domain var for later use.
+         */
         signDomain = _signDomain;
 
         maximumObjects = _supply;
         elements = _elements;
         signer = _signer;
+        erc20 = _erc20;
+        wallet = _wallet;
+
+        count = 0;
     }
 
     // handling of minting
     function mintObject(address _owner, Voucher calldata _voucher)
         external
-        payable
         returns (uint256)
     {
-        // tbd - checking the signature
+        // checking the signature
+        address voucherSigner = _verify(_voucher);
+        console.log(signer);
+        console.log(voucherSigner);
+        require(signer == voucherSigner, "voucher is not signed by the signer");
 
         // maximum objects reached
         require(count < maximumObjects, "maximum number of objects reached");
         count += 1;
 
         // check for unused voucher
-        require(usedVouchers[_voucher.id] == 0, "element already minted");
+        require(usedVouchers[_voucher.id] == 0, "object already minted");
         usedVouchers[_voucher.id] = 1;
 
-        // check if enough was paid
-        // tbd - change to usdc (erc20)
-        require(msg.value >= _voucher.price, "insufficient payment to redeem");
+        // make payment
+        IERC20Upgradeable(erc20).safeTransferFrom(
+            msg.sender,
+            wallet,
+            _voucher.price
+        );
 
         // adding the elements to the object
         require(
@@ -142,43 +165,54 @@ contract CollectiverseObjects is ERC1155Upgradeable, OperatorRole, EIP712Upgrade
     }
 
     // management functions
-    function withdrawAll() external onlyOperator {
-        payable(msg.sender).transfer(address(this).balance);
-    }
-
     function setURI(string calldata _uri) external onlyOperator {
         _setURI(_uri);
     }
 
-    function setSigner(address _signer) external onlyOperator {
+    function setSettings(
+        address _signer,
+        address _erc20,
+        address _wallet
+    ) external onlyOperator {
         signer = _signer;
+        erc20 = _erc20;
+        wallet = _wallet;
     }
 
     function setMaximumObjects(uint256 _maximumObjects) external onlyOperator {
         maximumObjects = _maximumObjects;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155Upgradeable) returns (bool) {
+    // voucher verification functions & other
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC1155Upgradeable)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 
-    /// @notice Returns a hash of the given Signature, prepared using EIP712 typed data hashing rules.
-    /// @param voucher An Signature to hash.
     function _hash(Voucher calldata voucher) internal view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(
-        keccak256("Voucher(uint256 id,uint256 price,uint256[] elementIds,uint256[] elementAmounts,uint256 preminedId,bytes signature)"),
-        voucher.id,
-        voucher.price,
-        voucher.elementIds,
-        voucher.elementAmounts,
-        voucher.preminedId,
-        voucher.signature
-        )));
+        return
+            _hashTypedDataV4(
+                keccak256(
+                    abi.encode(
+                        keccak256(
+                            "Voucher(uint256 id,uint256 price,uint256[] elementIds,uint256[] elementAmounts,uint256 preminedId,bytes signature)"
+                        ),
+                        voucher.id,
+                        voucher.price,
+                        voucher.elementIds,
+                        voucher.elementAmounts,
+                        voucher.preminedId,
+                        voucher.signature
+                    )
+                )
+            );
     }
 
-    /// @notice Verifies the signature for a given Signature, returning the address of the signer.
-    /// @dev Will revert if the signature is invalid. Does not verify that the signer is authorized to mint NFTs.
-    /// @param voucher An Signature describing an unminted NFT.
     function _verify(Voucher calldata voucher) internal view returns (address) {
         bytes32 digest = _hash(voucher);
         return ECDSAUpgradeable.recover(digest, voucher.signature);
