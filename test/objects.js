@@ -3,12 +3,13 @@ const { ethers, upgrades } = require("hardhat");
 
 const domain = "CollectiverseObjects";
 const wallet = "0x0000000000000000000000000000000000000001";
+const chainId = 31337;
 
 async function loadContracts() {
   const signer = await ethers.getSigner();
 
   const USDC = await ethers.getContractFactory("MockERC20");
-  const usdc = await USDC.deploy(5000000 * 1000000, 6);
+  const usdc = await USDC.deploy(5000000 * (10 ** 6), 6);
   await usdc.deployed();
 
   const Elements = await ethers.getContractFactory("CollectiverseElements");
@@ -18,6 +19,8 @@ async function loadContracts() {
   const Objects = await ethers.getContractFactory("CollectiverseObjects");
   const objects = await upgrades.deployProxy(Objects, ["", 1000, elements.address, signer.address, usdc.address, wallet, domain]);
   await objects.deployed();
+
+  await elements.addOperator(objects.address);
 
   return { signer, usdc, elements, objects };
 }
@@ -35,11 +38,13 @@ describe("Objects", function () {
         bytes signature;
     */
 
-    const voucher = { id: 1, price: 100 * 10 ** 6, elementIds: [], elementAmounts: [], preminedId: 0 };
+    await usdc.approve(objects.address, 100 * (10 ** 6));
+
+    const voucher = { id: 1, price: 100 * (10 ** 6), elementIds: [1, 2], elementAmounts: [200, 300], preminedId: 1 };
     const ethersDomain = {
       name: domain,
-      version: '1',
-      chainId: 1,
+      version: "1",
+      chainId: chainId,
       verifyingContract: objects.address
     };
     const types = {
@@ -54,8 +59,6 @@ describe("Objects", function () {
     const signature = await signer._signTypedData(ethersDomain, types, voucher)
     console.log({ ...voucher, signature })
 
-    console.log(signer.address)
-    const voucherId = await objects.mintObject(signer.address, { ...voucher, signature });
-    console.log(voucherId)
+    await objects.mintObject(signer.address, { ...voucher, signature });
   });
 })

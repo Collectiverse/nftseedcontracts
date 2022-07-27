@@ -94,8 +94,6 @@ contract CollectiverseObjects is
     {
         // checking the signature
         address voucherSigner = _verify(_voucher);
-        console.log(signer);
-        console.log(voucherSigner);
         require(signer == voucherSigner, "voucher is not signed by the signer");
 
         // maximum objects reached
@@ -119,7 +117,7 @@ contract CollectiverseObjects is
             "Ids and Amounts must have the same length"
         );
         for (uint256 i = 0; i < _voucher.elementIds.length; i++) {
-            _setMinableElement(
+            _addMinableElement(
                 _voucher.id,
                 _voucher.elementIds[i],
                 _voucher.elementAmounts[i]
@@ -133,7 +131,11 @@ contract CollectiverseObjects is
                 _voucher.preminedId,
                 minableElements[_voucher.id][_voucher.preminedId]
             );
-            _setMinableElement(_voucher.id, _voucher.preminedId, 0);
+            _removeMinableElement(
+                _voucher.id,
+                _voucher.preminedId,
+                minableElements[_voucher.id][_voucher.preminedId]
+            );
         }
 
         // mint the object
@@ -144,24 +146,50 @@ contract CollectiverseObjects is
     }
 
     // minable elements management
-    function setMinableElement(
+    function addMinableElement(
         uint256 _objectId,
         uint256 _elementId,
         uint256 _amount
     ) external onlyOperator {
-        _setMinableElement(_objectId, _elementId, _amount);
+        _addMinableElement(_objectId, _elementId, _amount);
     }
 
-    function _setMinableElement(
+    function _addMinableElement(
         uint256 _objectId,
         uint256 _elementId,
         uint256 _amount
     ) internal {
-        // calculating element supply
-        minableSupply[_elementId] += (_amount -
-            minableElements[_objectId][_elementId]);
+        minableSupply[_elementId] += _amount;
+        minableElements[_objectId][_elementId] += _amount;
+    }
 
-        minableElements[_objectId][_elementId] = _amount;
+    function removeMinableElement(
+        uint256 _objectId,
+        uint256 _elementId,
+        uint256 _amount
+    ) external onlyOperator {
+        _removeMinableElement(_objectId, _elementId, _amount);
+    }
+
+    function _removeMinableElement(
+        uint256 _objectId,
+        uint256 _elementId,
+        uint256 _amount
+    ) internal {
+        require(
+            minableElements[_objectId][_elementId] >= _amount,
+            "not enough elements"
+        );
+        minableSupply[_elementId] -= _amount;
+        minableElements[_objectId][_elementId] -= _amount;
+    }
+
+    function getMinableElement(uint256 _objectId, uint256 _elementId)
+        external
+        view
+        returns (uint256)
+    {
+        return minableElements[_objectId][_elementId];
     }
 
     // management functions
@@ -200,14 +228,13 @@ contract CollectiverseObjects is
                 keccak256(
                     abi.encode(
                         keccak256(
-                            "Voucher(uint256 id,uint256 price,uint256[] elementIds,uint256[] elementAmounts,uint256 preminedId,bytes signature)"
+                            "Voucher(uint256 id,uint256 price,uint256[] elementIds,uint256[] elementAmounts,uint256 preminedId)"
                         ),
                         voucher.id,
                         voucher.price,
-                        voucher.elementIds,
-                        voucher.elementAmounts,
-                        voucher.preminedId,
-                        voucher.signature
+                        keccak256(abi.encodePacked(voucher.elementIds)),
+                        keccak256(abi.encodePacked(voucher.elementAmounts)),
+                        voucher.preminedId
                     )
                 )
             );
