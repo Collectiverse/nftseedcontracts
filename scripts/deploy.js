@@ -1,28 +1,36 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
-
-  const lockedAmount = hre.ethers.utils.parseEther("1");
-
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+const domain = "CollectiverseObjects";
+const static = {
+  "zero": "0x0000000000000000000000000000000000000000",
+  "usdc": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+  "wallet": "0x0000000000000000000000000000000000000001",
+  "signer": "0x0000d468Bc1Db5f25b2C2D9E38658563A97781f1",
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
+async function main() {
+  const deployer = await ethers.getSigner();
+
+  const ERC20 = await ethers.getContractFactory("MockERC20");
+  const erc20 = await ERC20.deploy(5000000 * (10 ** 6), 6);
+  await erc20.deployed();
+
+  const Elements = await ethers.getContractFactory("CollectiverseElements");
+  const elements = await upgrades.deployProxy(Elements, [""]);
+  await elements.deployed();
+
+  const Objects = await ethers.getContractFactory("CollectiverseObjects");
+  const objects = await upgrades.deployProxy(Objects, ["", 1000, elements.address, static.signer, erc20.address, static.wallet, domain]);
+  await objects.deployed();
+
+  await elements.addOperator(objects.address);
+
+  console.log("DEPLOYMENT SUCCESSFUL");
+  console.log("ERC20   :", erc20.address);
+  console.log("Elements:", elements.address);
+  console.log("Objects :", objects.address);
+}
+
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;

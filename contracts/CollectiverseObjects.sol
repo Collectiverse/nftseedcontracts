@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
 pragma abicoder v2; // required to accept structs as function parameters
 
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
@@ -13,8 +12,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "./OperatorRole.sol";
 
 import "./CollectiverseElements.sol";
-
-import "hardhat/console.sol";
 
 contract CollectiverseObjects is
     ERC1155Upgradeable,
@@ -63,19 +60,11 @@ contract CollectiverseObjects is
         address _wallet,
         string memory _signDomain
     ) public initializer {
-        /*
-         * Initialization of the EIP721 signature formats
-         * the signdomain can be unique, but in this case we are passing as initializer variable
-         * We have to make a choice to keep it or to change to a Const
-         */
         __EIP712_init(_signDomain, SIGNATURE_VERSION);
 
         __OperatorRole_init();
         __ERC1155_init(_uri);
 
-        /*
-         * Sign domain var for later use.
-         */
         signDomain = _signDomain;
 
         maximumObjects = _supply;
