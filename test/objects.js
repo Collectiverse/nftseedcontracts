@@ -3,7 +3,7 @@ const { ethers, upgrades } = require("hardhat");
 
 const domain = "CollectiverseObjects";
 const wallet = "0x0000000000000000000000000000000000000001";
-const chainId = 31337;
+const chainId = 43114;
 
 async function loadContracts() {
   const signer = await ethers.getSigner();

@@ -48,6 +48,13 @@ contract CollectiverseObjects is
     address public erc20;
     address public wallet;
 
+    struct Whitelist {
+        uint256 price;
+        uint256 qty;
+    }
+
+    mapping (address => Whitelist) whiteListedMintPrices;
+
     event ObjectMinted(uint256 id, address owner);
     event UpdatedURI(string uri);
 
@@ -76,6 +83,14 @@ contract CollectiverseObjects is
         count = 0;
     }
 
+    function addToWhiteList(uint256 _price, uint256 _qty, address _address) public onlyOperator {
+        whiteListedMintPrices[_address] = Whitelist(_price, _qty);
+    }
+
+    function getWhiteListForAddress(address _address) public view returns (uint256, uint256) {
+        return (whiteListedMintPrices[_address].price, whiteListedMintPrices[_address].qty);
+    }
+
     // handling of minting
     function mintObject(address _owner, Voucher calldata _voucher)
         external
@@ -93,12 +108,23 @@ contract CollectiverseObjects is
         require(usedVouchers[_voucher.id] == 0, "object already minted");
         usedVouchers[_voucher.id] = 1;
 
-        // make payment
+        Whitelist storage currentWhiteList = whiteListedMintPrices[msg.sender];
+
+        uint256 whiteListValue = currentWhiteList.price;
+        uint256 isWhiteListActive = currentWhiteList.qty;
+
+        if (isWhiteListActive > 0) {
+            require(_voucher.price >= whiteListValue, "Insufficient funds to mint whitelist");
+            whiteListedMintPrices[msg.sender].qty = isWhiteListActive - 1;
+        }
+
         IERC20Upgradeable(erc20).safeTransferFrom(
-            msg.sender,
-            wallet,
-            _voucher.price
-        );
+                msg.sender,
+                wallet,
+                _voucher.price
+            );
+
+        
 
         // adding the elements to the object
         require(
