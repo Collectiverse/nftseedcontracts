@@ -217,7 +217,7 @@ contract CollectiverseObjects is
     // whitelist addresses
     function whitelistAddresses(address[] memory _addresses, uint256 _amount)
         external
-        onlyOwner
+        onlyOperator
         returns (bool)
     {
         for (uint256 i = 0; i < _addresses.length; i++) {

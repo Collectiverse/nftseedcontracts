@@ -78,7 +78,9 @@ describe("Objects", function () {
     };
     const signature = await signer._signTypedData(ethersDomain, types, voucher)
 
+    await objects.addOperator(signer.address);
     await objects.whitelistAddresses([signer.address], 1);
+
     await objects.mintObject(signer.address, { ...voucher, signature });
   });
 
