@@ -41,6 +41,7 @@ contract CollectiverseObjects is
         uint256[] elementIds;
         uint256[] elementAmounts;
         uint256 preminedId;
+        bool useWhitelist;
         bytes signature;
     }
     address public signer;
@@ -48,12 +49,9 @@ contract CollectiverseObjects is
     address public erc20;
     address public wallet;
 
-    struct Whitelist {
-        uint256 price;
-        uint256 qty;
-    }
-
-    mapping (address => Whitelist) whiteListedMintPrices;
+    // whitelidted addresses
+    mapping(address => uint256) public whitelist;
+    mapping(address => uint256) public whitelistPurchased;
 
     event ObjectMinted(uint256 id, address owner);
     event UpdatedURI(string uri);
@@ -83,14 +81,6 @@ contract CollectiverseObjects is
         count = 0;
     }
 
-    function addToWhiteList(uint256 _price, uint256 _qty, address _address) public onlyOperator {
-        whiteListedMintPrices[_address] = Whitelist(_price, _qty);
-    }
-
-    function getWhiteListForAddress(address _address) public view returns (uint256, uint256) {
-        return (whiteListedMintPrices[_address].price, whiteListedMintPrices[_address].qty);
-    }
-
     // handling of minting
     function mintObject(address _owner, Voucher calldata _voucher)
         external
@@ -108,28 +98,26 @@ contract CollectiverseObjects is
         require(usedVouchers[_voucher.id] == 0, "object already minted");
         usedVouchers[_voucher.id] = 1;
 
-        Whitelist storage currentWhiteList = whiteListedMintPrices[msg.sender];
-
-        uint256 whiteListValue = currentWhiteList.price;
-        uint256 isWhiteListActive = currentWhiteList.qty;
-
-        if (isWhiteListActive > 0) {
-            require(_voucher.price >= whiteListValue, "Insufficient funds to mint whitelist");
-            whiteListedMintPrices[msg.sender].qty = isWhiteListActive - 1;
+        // check whitelist requirement
+        if (_voucher.useWhitelist) {
+            whitelistPurchased[_owner] += 1;
+            require(
+                (whitelistPurchased[_owner]) <= whitelist[_owner],
+                "personal whitelisted purchase limit reached"
+            );
         }
 
+        // make payment
         IERC20Upgradeable(erc20).safeTransferFrom(
-                msg.sender,
-                wallet,
-                _voucher.price
-            );
-
-        
+            msg.sender,
+            wallet,
+            _voucher.price
+        );
 
         // adding the elements to the object
         require(
             _voucher.elementIds.length == _voucher.elementAmounts.length,
-            "Ids and Amounts must have the same length"
+            "element ids and amounts must have the same length"
         );
         for (uint256 i = 0; i < _voucher.elementIds.length; i++) {
             _addMinableElement(
@@ -226,6 +214,19 @@ contract CollectiverseObjects is
         maximumObjects = _maximumObjects;
     }
 
+    // whitelist addresses
+    function whitelistAddresses(address[] memory _addresses, uint256 _amount)
+        external
+        onlyOwner
+        returns (bool)
+    {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            require(_addresses[i] != address(0x0), "Zero Address: Not Allowed");
+            whitelist[_addresses[i]] = _amount;
+        }
+        return true;
+    }
+
     // voucher verification functions & other
     function supportsInterface(bytes4 interfaceId)
         public
@@ -243,13 +244,14 @@ contract CollectiverseObjects is
                 keccak256(
                     abi.encode(
                         keccak256(
-                            "Voucher(uint256 id,uint256 price,uint256[] elementIds,uint256[] elementAmounts,uint256 preminedId)"
+                            "Voucher(uint256 id,uint256 price,uint256[] elementIds,uint256[] elementAmounts,uint256 preminedId,bool useWhitelist)"
                         ),
                         voucher.id,
                         voucher.price,
                         keccak256(abi.encodePacked(voucher.elementIds)),
                         keccak256(abi.encodePacked(voucher.elementAmounts)),
-                        voucher.preminedId
+                        voucher.preminedId,
+                        voucher.useWhitelist
                     )
                 )
             );
