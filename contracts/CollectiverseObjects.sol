@@ -81,9 +81,28 @@ contract CollectiverseObjects is
         count = 0;
     }
 
-    // handling of minting
+    // public facing minting functions
     function mintObject(address _owner, Voucher calldata _voucher)
         external
+        returns (uint256)
+    {
+        return _mintObject(_owner, _voucher);
+    }
+
+    function mintObjects(address _owner, Voucher[] calldata _voucher)
+        external
+        returns (uint256[] memory)
+    {
+        uint256[] memory _ids = new uint256[](_voucher.length);
+        for (uint256 i = 0; i < _voucher.length; i++) {
+            _ids[i] = (_mintObject(_owner, _voucher[i]));
+        }
+        return _ids;
+    }
+
+    // handling of minting
+    function _mintObject(address _owner, Voucher calldata _voucher)
+        internal
         returns (uint256)
     {
         // checking the signature
