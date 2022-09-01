@@ -53,6 +53,10 @@ contract CollectiverseObjects is
     mapping(address => uint256) public whitelist;
     mapping(address => uint256) public whitelistPurchased;
 
+    // maximum purchase amounts
+    uint256 public maxPurchaseAmount;
+    mapping(address => uint256) public purchaseAmounts;
+
     event ObjectMinted(uint256 id, address owner);
     event UpdatedURI(string uri);
 
@@ -77,6 +81,8 @@ contract CollectiverseObjects is
         signer = _signer;
         erc20 = _erc20;
         wallet = _wallet;
+
+        maxPurchaseAmount = 10;
 
         count = 0;
     }
@@ -125,6 +131,13 @@ contract CollectiverseObjects is
                 "personal whitelisted purchase limit reached"
             );
         }
+
+        // check maximum purchase amount
+        purchaseAmounts[_owner] += 1;
+        require(
+            purchaseAmounts[_owner] <= maxPurchaseAmount,
+            "personal purchase limit reached"
+        );
 
         // make payment
         IERC20Upgradeable(erc20).safeTransferFrom(
@@ -222,11 +235,13 @@ contract CollectiverseObjects is
     function setSettings(
         address _signer,
         address _erc20,
-        address _wallet
+        address _wallet,
+        uint256 _maxPurchaseAmount
     ) external onlyOperator {
         signer = _signer;
         erc20 = _erc20;
         wallet = _wallet;
+        maxPurchaseAmount = _maxPurchaseAmount;
     }
 
     function setMaximumObjects(uint256 _maximumObjects) external onlyOperator {

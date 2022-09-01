@@ -31,13 +31,18 @@
       "kind": "transparent"
     },
     {
+      "address": "0x349F302d547984752ec86a7F7b56AE87975Cde7a",
+      "txHash": "0x53461f746e77e88ba64a2ed3836781f61e2ef08d1ed577c3d93b36131e3f5914",
+      "kind": "transparent"
+    },
+    {
       "address": "0x2674F116d2d2b73AEbc625ed368F378e831A3BA8",
       "txHash": "0x6b14069131f2406a93770cb908a28a3fb6ce6038a425663dc8b1962d2d873348",
       "kind": "transparent"
     },
     {
       "address": "0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB",
-      "txHash": "0x5ae5f2876cbf834b5ff19e749b8db468f4bd40b14a7ae5973b8bfca794b0bcc6",
+      "txHash": "0xabd32c1a24e80f81476e1e7a5ceda113612500cf95f665324e6a486083926355",
       "kind": "transparent"
     },
     {
@@ -47,7 +52,7 @@
     },
     {
       "address": "0x0148fc0e3606D36ec60262792fd5EFeC2366E36f",
-      "txHash": "0x5583d14531567be42ea2639ca8998810516dd608827ec40e3b4b53934c4d120f",
+      "txHash": "0x19029fe78632e1552d444df5203c2c7f98b409c1a5b40a86267a44506ee7b33f",
       "kind": "transparent"
     },
     {
@@ -57,7 +62,7 @@
     },
     {
       "address": "0x5447B8a29B6D2684935f2C22854C9cA8774FACDa",
-      "txHash": "0x8dcfa992bd977b23022c49faa0ee5de782a9cc6d2781a5052e67cfe6b4af43c8",
+      "txHash": "0xa849bb347f76990b24fc86fe977897db20dcb2eca45f1e23b9c10ee24f85a54d",
       "kind": "transparent"
     }
   ],
@@ -221,9 +226,9 @@
         }
       }
     },
-    "7064f9c4f368c12937d7a020a581f0fdf8a4b8aae476fa008531d0dceead9a0f": {
+    "8d0c1b4d205c04cff8997e072d7d3aef381c768918c11b02b9a5fbe9cd246185": {
       "address": "0xa0074136173DfFa94bB1d7885A43Cbd291884A39",
-      "txHash": "0x98a7479d8c004adf7ca00c018464d9137bc730de26fe28df51780a64a21f39e6",
+      "txHash": "0xf18ba0db9718e91cb879b125b39776bf6e4902ab9da3c51514510278a4d7f78d",
       "layout": {
         "storage": [
           {
@@ -434,6 +439,22 @@
             "type": "t_mapping(t_address,t_uint256)",
             "contract": "CollectiverseObjects",
             "src": "contracts/CollectiverseObjects.sol:54"
+          },
+          {
+            "label": "maxPurchaseAmount",
+            "offset": 0,
+            "slot": "266",
+            "type": "t_uint256",
+            "contract": "CollectiverseObjects",
+            "src": "contracts/CollectiverseObjects.sol:57"
+          },
+          {
+            "label": "purchaseAmounts",
+            "offset": 0,
+            "slot": "267",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "CollectiverseObjects",
+            "src": "contracts/CollectiverseObjects.sol:58"
           }
         ],
         "types": {
