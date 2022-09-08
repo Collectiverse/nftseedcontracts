@@ -82,7 +82,7 @@ contract CollectiverseObjects is
         erc20 = _erc20;
         wallet = _wallet;
 
-        maxPurchaseAmount = 10;
+        maxPurchaseAmount = 15;
 
         count = 0;
     }
