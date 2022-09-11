@@ -1,9 +1,19 @@
-const { expect } = require("chai");
+const { expect, assert } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 
 const domain = "CollectiverseObjects";
 const wallet = "0x0000000000000000000000000000000000000001";
 const chainId = 43114;
+
+// Async chai helper
+const expectThrowsAsync = async (method) => {
+  try {
+    await method()
+  } catch (e) {
+    return true
+  }
+  return false
+}
 
 /*
     uint256 id;
@@ -32,75 +42,114 @@ async function loadContracts() {
   const usdc = await USDC.deploy(5000000 * (10 ** 6), 6);
   await usdc.deployed();
 
-  const Elements = await ethers.getContractFactory("CollectiverseElements");
+  const Elements = await ethers.getContractFactory("CollectiverseNFT");
   const elements = await upgrades.deployProxy(Elements, [""]);
   await elements.deployed();
 
-  const Objects = await ethers.getContractFactory("CollectiverseObjects");
-  const objects = await upgrades.deployProxy(Objects, ["", 1000, elements.address, signer.address, usdc.address, wallet, domain]);
+  const Objects = await ethers.getContractFactory("CollectiverseNFT");
+  const objects = await upgrades.deployProxy(Objects, [""]);
   await objects.deployed();
 
-  await elements.addOperator(objects.address);
+  const Sale = await ethers.getContractFactory("CollectiverseSeedSale");
+  const sale = await Sale.deploy(elements.address, objects.address, usdc.address, wallet, signer.address);
+  await sale.deployed();
 
-  return { signer, usdc, elements, objects };
+  await elements.addOperator(sale.address);
+  await objects.addOperator(sale.address);
+
+  return { signer, usdc, elements, objects, sale };
 }
 
 describe("Objects", function () {
   it("Using a voucher without whitelist", async function () {
-    let { signer, usdc, elements, objects } = await loadContracts();
+    let { signer, usdc, elements, objects, sale } = await loadContracts();
 
-    await usdc.approve(objects.address, 100 * (10 ** 6));
+    await usdc.approve(sale.address, 100 * (10 ** 6));
 
     const voucher = { id: 1, price: 100 * (10 ** 6), elementIds: [1, 2], elementAmounts: [200, 300], preminedId: 1, useWhitelist: false };
     const ethersDomain = {
       name: domain,
       version: "1",
       chainId: chainId,
-      verifyingContract: objects.address
+      verifyingContract: sale.address
     };
     const signature = await signer._signTypedData(ethersDomain, types, voucher)
     // console.log({ ...voucher, signature })
 
-    await objects.mintObject(signer.address, { ...voucher, signature });
+    await sale.mintObject(signer.address, { ...voucher, signature });
   });
 
   it("Using a voucher with whitelist", async function () {
-    let { signer, usdc, elements, objects } = await loadContracts();
+    let { signer, usdc, elements, objects, sale } = await loadContracts();
 
-    await usdc.approve(objects.address, 100 * (10 ** 6));
+    await usdc.approve(sale.address, 100 * (10 ** 6));
 
     const voucher = { id: 1, price: 100 * (10 ** 6), elementIds: [1, 2], elementAmounts: [200, 300], preminedId: 1, useWhitelist: true };
     const ethersDomain = {
       name: domain,
       version: "1",
       chainId: chainId,
-      verifyingContract: objects.address
+      verifyingContract: sale.address
     };
     const signature = await signer._signTypedData(ethersDomain, types, voucher)
 
-    await objects.addOperator(signer.address);
-    await objects.whitelistAddresses([signer.address], 1);
+    await sale.whitelistAddresses([signer.address], 1);
 
-    await objects.mintObject(signer.address, { ...voucher, signature });
+    await sale.mintObject(signer.address, { ...voucher, signature });
   });
 
   it("Trying to buy without being whitelisted", async function () {
-    let { signer, usdc, elements, objects } = await loadContracts();
+    let { signer, usdc, elements, objects, sale } = await loadContracts();
 
-    await usdc.approve(objects.address, 100 * (10 ** 6));
+    await usdc.approve(sale.address, 100 * (10 ** 6));
 
     const voucher = { id: 1, price: 100 * (10 ** 6), elementIds: [1, 2], elementAmounts: [200, 300], preminedId: 1, useWhitelist: true };
     const ethersDomain = {
       name: domain,
       version: "1",
       chainId: chainId,
-      verifyingContract: objects.address
+      verifyingContract: sale.address
     };
     const signature = await signer._signTypedData(ethersDomain, types, voucher)
 
-    try {
-      await objects.mintObject(signer.address, { ...voucher, signature });
-      expect(false).to.equal(true)
-    } catch (e) { }
+    expect(await expectThrowsAsync(() => sale.mintObject(signer.address, { ...voucher, signature }))).to.equal(true);
+  });
+
+  it("Trying to redeem same voucher twice", async function () {
+    let { signer, usdc, elements, objects, sale } = await loadContracts();
+
+    await usdc.approve(sale.address, 500 * (10 ** 6));
+
+    const voucher = { id: 1, price: 100 * (10 ** 6), elementIds: [1, 2], elementAmounts: [200, 300], preminedId: 1, useWhitelist: false };
+    const ethersDomain = {
+      name: domain,
+      version: "1",
+      chainId: chainId,
+      verifyingContract: sale.address
+    };
+    const signature = await signer._signTypedData(ethersDomain, types, voucher)
+    // console.log({ ...voucher, signature })
+
+    await sale.mintObject(signer.address, { ...voucher, signature });
+    expect(await expectThrowsAsync(() => sale.mintObject(signer.address, { ...voucher, signature }))).to.equal(true);
+  });
+
+  it("Checking Element access", async function () {
+    let { signer, usdc, elements, objects, sale } = await loadContracts();
+
+    await usdc.approve(sale.address, 100 * (10 ** 6));
+
+    const voucher = { id: 1, price: 100 * (10 ** 6), elementIds: [1, 2], elementAmounts: [200, 300], preminedId: 1, useWhitelist: false };
+    const ethersDomain = {
+      name: domain,
+      version: "1",
+      chainId: chainId,
+      verifyingContract: sale.address
+    };
+    const signature = await signer._signTypedData(ethersDomain, types, voucher)
+    // console.log({ ...voucher, signature })
+
+    await sale.mintObject(signer.address, { ...voucher, signature });
+    expect((await sale.minable(1, 2)).toNumber()).to.equal(300)
   });
 })

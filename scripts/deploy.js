@@ -15,20 +15,25 @@ async function main() {
   const erc20 = await ERC20.deploy(5000000 * (10 ** 6), 6);
   await erc20.deployed();
 
-  const Elements = await ethers.getContractFactory("CollectiverseElements");
+  const Elements = await ethers.getContractFactory("CollectiverseNFT");
   const elements = await upgrades.deployProxy(Elements, [""]);
   await elements.deployed();
 
-  const Objects = await ethers.getContractFactory("CollectiverseObjects");
-  const objects = await upgrades.deployProxy(Objects, ["", 1000, elements.address, static.signer, erc20.address, static.wallet, domain]);
+  const Objects = await ethers.getContractFactory("CollectiverseNFT");
+  const objects = await upgrades.deployProxy(Objects, [""]);
   await objects.deployed();
 
-  await elements.addOperator(objects.address);
+  const Sale = await ethers.getContractFactory("CollectiverseSeedSale");
+  const sale = await Sale.deploy(elements.address, objects.address, erc20.address, static.wallet, static.signer);
+  await sale.deployed();
+
+  await elements.addOperator(sale.address);
 
   console.log("DEPLOYMENT SUCCESSFUL");
   console.log("ERC20   :", erc20.address);
   console.log("Elements:", elements.address);
   console.log("Objects :", objects.address);
+  console.log("Sale    :", sale.address);
 }
 
 main().catch((error) => {
