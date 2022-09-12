@@ -28,6 +28,7 @@ async function main() {
   await sale.deployed();
 
   await elements.addOperator(sale.address);
+  await objects.addOperator(sale.address);
 
   console.log("DEPLOYMENT SUCCESSFUL");
   console.log("ERC20   :", erc20.address);
