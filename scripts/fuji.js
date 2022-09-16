@@ -16,7 +16,10 @@ async function main() {
   const objects = await ethers.getContractAt("CollectiverseNFT", "0xF87A8358cddc11604153d797A162d8bc9ca32EFb");
   const sale = await ethers.getContractAt("CollectiverseSeedSale", "0xfbE32fdEf555Fe8A80C716D9431B19dc2A221a62");
 
-  // await sale.addOperator("0x0F6885dEB17B3FBe844250B0905a084267B81679");
+  // await elements.addOperator("0x2b793e780460C88c78057bB6635A1F93d3c1a660");
+  // await objects.addOperator("0x2b793e780460C88c78057bB6635A1F93d3c1a660");
+  // await sale.whitelistAddresses(["0x2b793e780460C88c78057bB6635A1F93d3c1a660"], 1);
+  // await sale.transferOwnership("0x2b793e780460C88c78057bB6635A1F93d3c1a660");
   // await sale.setSettings(static.signer, static.wallet);
   // await objects.addOperator(deployer.address);
   // await objects.setURI("https://ipfs.io/ipfs/QmVdYEeyoDUU84xNLMw4k4FV6u6BzsFYBczFhijVqGTstD/{id}.json");

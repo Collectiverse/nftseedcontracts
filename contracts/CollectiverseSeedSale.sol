@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CollectiverseNFT.sol";
 
 contract CollectiverseSeedSale is Ownable, EIP712 {
-    using ECDSA for bytes32;
     using SafeERC20 for IERC20;
 
     struct Voucher {
@@ -22,11 +21,13 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
         bytes signature;
     }
     address public signer;
-    address public erc20;
+    address public immutable erc20;
     address public wallet;
 
-    address public elements;
-    address public objects;
+    address public immutable elements;
+    address public immutable objects;
+
+    uint256 public minimumPrice;
 
     // object - element - amount
     mapping(uint256 => mapping(uint256 => uint256)) public minable;
@@ -37,15 +38,19 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
     constructor(
         address _elements,
         address _objects,
-        address _erc20,
-        address _wallet,
         address _signer
     ) EIP712("CollectiverseObjects", "1") {
         elements = _elements;
         objects = _objects;
-        erc20 = _erc20;
-        wallet = _wallet;
         signer = _signer;
+
+        // usdc avax address
+        erc20 = 0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E;
+        wallet = 0x233E70CdE8FeAb985CCAA5938C579cc47B1ffAeD;
+        _transferOwnership(0x233E70CdE8FeAb985CCAA5938C579cc47B1ffAeD);
+
+        // 50 usdc
+        minimumPrice = 50000000;
     }
 
     // minting objects
@@ -71,12 +76,21 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
         }
 
         // payment, elements, premining & minting
+        require(_voucher.price >= minimumPrice, "not minimum price");
         IERC20(erc20).safeTransferFrom(msg.sender, wallet, _voucher.price);
 
         require(_voucher.elementIds.length == _voucher.elementAmounts.length);
+        bool preInElements = false;
         for (uint256 i = 0; i < _voucher.elementIds.length; i++) {
             minable[_id][_voucher.elementIds[i]] = _voucher.elementAmounts[i];
+            if (_voucher.elementIds[i] == _pre) {
+                preInElements = true;
+            }
         }
+        require(
+            preInElements,
+            "Incorrectly signed Voucher, preminedId was not found in elementIds."
+        );
 
         CollectiverseNFT(elements).mint(_owner, _pre, minable[_id][_pre]);
         minable[_id][_pre] = 0;
@@ -86,9 +100,14 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
     }
 
     // management functions
-    function setSettings(address _signer, address _wallet) external onlyOwner {
+    function setSettings(
+        address _signer,
+        address _wallet,
+        uint256 _minimumPrice
+    ) external onlyOwner {
         signer = _signer;
         wallet = _wallet;
+        minimumPrice = _minimumPrice;
     }
 
     function whitelistAddresses(address[] memory _addresses, uint256 _amount)
