@@ -28,6 +28,7 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
     address public immutable objects;
 
     uint256 public minimumPrice;
+    uint256 public maximumPrice;
 
     // object - element - amount
     mapping(uint256 => mapping(uint256 => uint256)) public minable;
@@ -77,20 +78,13 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
 
         // payment, elements, premining & minting
         require(_voucher.price >= minimumPrice, "not minimum price");
+        require(_voucher.price <= maximumPrice, "not maximum price");
         IERC20(erc20).safeTransferFrom(msg.sender, wallet, _voucher.price);
 
         require(_voucher.elementIds.length == _voucher.elementAmounts.length);
-        bool preInElements = false;
         for (uint256 i = 0; i < _voucher.elementIds.length; i++) {
             minable[_id][_voucher.elementIds[i]] = _voucher.elementAmounts[i];
-            if (_voucher.elementIds[i] == _pre) {
-                preInElements = true;
-            }
         }
-        require(
-            preInElements,
-            "Incorrectly signed Voucher, preminedId was not found in elementIds."
-        );
 
         CollectiverseNFT(elements).mint(_owner, _pre, minable[_id][_pre]);
         minable[_id][_pre] = 0;
@@ -103,11 +97,13 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
     function setSettings(
         address _signer,
         address _wallet,
-        uint256 _minimumPrice
+        uint256 _minimumPrice,
+        uint256 _maximumPrice
     ) external onlyOwner {
         signer = _signer;
         wallet = _wallet;
         minimumPrice = _minimumPrice;
+        maximumPrice = _maximumPrice;
     }
 
     function whitelistAddresses(address[] memory _addresses, uint256 _amount)
