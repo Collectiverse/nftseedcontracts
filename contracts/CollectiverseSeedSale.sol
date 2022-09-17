@@ -52,6 +52,9 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
 
         // 50 usdc
         minimumPrice = 50000000;
+
+        // 2000 usdc
+        maximumPrice = 2000000000;
     }
 
     // minting objects
