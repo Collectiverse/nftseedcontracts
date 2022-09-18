@@ -35,6 +35,8 @@
     "node": "hardhat node",
     "deploy-local": "hardhat run --network localhost scripts/deploy.js",
     "deploy-fuji": "hardhat run --network fuji scripts/deploy.js",
-    "live-fuji": "hardhat run --network fuji scripts/fuji.js"
+    "deploy-avax": "hardhat run --network avax scripts/deploy.js",
+    "live-fuji": "hardhat run --network fuji scripts/fuji.js",
+    "live-avax": "hardhat run --network avax scripts/avax.js"
   }
 }

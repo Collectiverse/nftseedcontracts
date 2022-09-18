@@ -1,10 +1,7 @@
 const { ethers, upgrades } = require("hardhat");
 
 const static = {
-  "zero": "0x0000000000000000000000000000000000000000",
-  "usdc": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
-  "wallet": "0x0000000000000000000000000000000000000001",
-  "signer": "0x0000000000000000000000000000000000000002",
+  "signer": "0x1Ad3aED9101A2e9fC0D376a8cA7a74d5Cee13136",
 }
 
 async function main() {
@@ -29,6 +26,7 @@ async function main() {
   console.log("Elements:", elements.address);
   console.log("Objects :", objects.address);
   console.log("Sale    :", sale.address);
+  // console.log("Multisig:", await sale.owner())
 }
 
 main().catch((error) => {

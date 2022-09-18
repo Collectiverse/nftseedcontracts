@@ -22,6 +22,10 @@ const config: HardhatUserConfig = {
       url: FUJI_URL || "",
       accounts: [TEST_KEY || ""]
     },
+    avax: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts: [TEST_KEY || ""]
+    },
     hardhat: {
       chainId: 43114,
       gasPrice: 225000000000,
