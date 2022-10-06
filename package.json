@@ -1,5 +1,5 @@
 {
-  "name": "NFT_SEED",
+  "name": "collectiverse-seed",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -33,10 +33,10 @@
     "test": "hardhat test",
     "compile": "hardhat compile",
     "node": "hardhat node",
-    "deploy-local": "hardhat run --network localhost scripts/deploy.js",
-    "deploy-fuji": "hardhat run --network fuji scripts/deploy.js",
-    "deploy-avax": "hardhat run --network avax scripts/deploy.js",
-    "live-fuji": "hardhat run --network fuji scripts/fuji.js",
-    "live-avax": "hardhat run --network avax scripts/avax.js"
+    "test-deploy-local": "hardhat run --network localhost scripts/test-deploy.js",
+    "test-deploy-bsc": "hardhat run --network bsc-testnet scripts/test-deploy.js",
+    "test-avax": "hardhat run --network fuji scripts/test-fuji.js",
+    "test-bsc": "hardhat run --network bsc-testnet scripts/test-bsc.js",
+    "live-avax": "hardhat run --network avax scripts/live-avax.js"
   }
 }

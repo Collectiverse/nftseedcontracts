@@ -26,6 +26,10 @@ const config: HardhatUserConfig = {
       url: "https://api.avax.network/ext/bc/C/rpc",
       accounts: [TEST_KEY || ""]
     },
+    "bsc-testnet": {
+      url: "https://data-seed-prebsc-1-s2.binance.org:8545",
+      accounts: [TEST_KEY || ""]
+    },
     hardhat: {
       chainId: 43114,
       gasPrice: 225000000000,
