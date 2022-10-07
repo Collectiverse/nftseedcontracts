@@ -3,7 +3,7 @@ require("@nomiclabs/hardhat-etherscan");
 require("solidity-coverage");
 require('@openzeppelin/hardhat-upgrades');
 
-const { PRIVATE_KEY, TEST_KEY, FUJI_URL } = process.env;
+const { TEST_KEY } = process.env;
 
 import { HardhatUserConfig } from "hardhat/config";
 
@@ -18,18 +18,29 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    fuji: {
-      url: FUJI_URL || "",
-      accounts: [TEST_KEY || ""]
-    },
+    // MAINNETS
     avax: {
       url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts: [TEST_KEY || ""]
+    },
+    // TESTNETS
+    "avax-fuji": {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
       accounts: [TEST_KEY || ""]
     },
     "bsc-testnet": {
       url: "https://data-seed-prebsc-1-s2.binance.org:8545",
       accounts: [TEST_KEY || ""]
     },
+    "eth-sepolia": {
+      url: "https://rpc.sepolia.org",
+      accounts: [TEST_KEY || ""]
+    },
+    "polygon-mumbai": {
+      url: "https://polygon-testnet.public.blastapi.io",
+      accounts: [TEST_KEY || ""]
+    },
+    // LOCAL NODE
     hardhat: {
       chainId: 43114,
       gasPrice: 225000000000,

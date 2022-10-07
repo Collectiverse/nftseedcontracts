@@ -6,9 +6,8 @@ const wallet = "0x0000000000000000000000000000000000000001";
 async function main() {
   const deployer = await ethers.getSigner();
 
-  // asuming 0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d on the bsc mainnet
   const ERC20 = await ethers.getContractFactory("MockERC20");
-  const erc20 = await ERC20.deploy(100 * (10 ** 6), 18);
+  const erc20 = await ERC20.deploy(1000000 * (10 ** 6), 6);
   await erc20.deployed();
 
   const Objects = await ethers.getContractFactory("TestNFT");

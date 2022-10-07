@@ -38,24 +38,32 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
 ## **Testnet Contracts**
 - Signer:   0x2b793e780460C88c78057bB6635A1F93d3c1a660
 - Multisig: 0x0000000000000000000000000000000000000001
-- Deployer: 
+- Deployer: 0x0000d468Bc1Db5f25b2C2D9E38658563A97781f1
 
-### [Avalanche Fuji](https://testnet.snowtrace.io)
+### [Avalanche Fuji](https://testnet.snowtrace.io) - [Faucet](https://faucet.avax-test.network)
 - Elements: 0xE58Aa1081fff34b97abb64b7552c41edEBE313fF
 - Objects:  0xF87A8358cddc11604153d797A162d8bc9ca32EFb
 - Sale:     0xfbE32fdEf555Fe8A80C716D9431B19dc2A221a62
 - ERC20:    0xFeD8D59b083AB4AC3FCBB8C5b6d89579bB637Ab9
   - Decimals: 6
 
-### [BSC Testnet](https://testnet.bscscan.com)
+### [BSC Testnet](https://testnet.bscscan.com) - [Faucet](https://testnet.binance.org/faucet-smart)
 - Elements: 0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
 - Objects:  0xa0074136173DfFa94bB1d7885A43Cbd291884A39
 - Sale:     0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
 - ERC20:    0x2b721B6748c84AD9B58BAb5F8CbE7CcAD4e9F246
   - Decimals: 18
 
-### [ETH Goerli](https://goerli.etherscan.io)
-*TBD*
+### [ETH Sepolia](https://sepolia.etherscan.io) - [Faucet](https://faucet.sepolia.dev/)
+- Elements: 0xa0074136173DfFa94bB1d7885A43Cbd291884A39
+- Objects:  0x2674F116d2d2b73AEbc625ed368F378e831A3BA8
+- Sale:     0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
+- ERC20:    0xAbC2EAFC19671c5704d5b0eCE78934a962E0366F
+  - Decimals: 6
 
-### [Polygon Mumbai](https://mumbai.polygonscan.com)
-*TBD*
+### [Polygon Mumbai](https://mumbai.polygonscan.com) - [Faucet](https://faucet.polygon.technology/)
+- Elements: 0xa0074136173DfFa94bB1d7885A43Cbd291884A39
+- Objects:  0x2674F116d2d2b73AEbc625ed368F378e831A3BA8
+- Sale:     0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
+- ERC20:    0xAbC2EAFC19671c5704d5b0eCE78934a962E0366F
+  - Decimals: 6
