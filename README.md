@@ -48,22 +48,22 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 6
 
 ### [BSC Testnet](https://testnet.bscscan.com) - [Faucet](https://testnet.binance.org/faucet-smart)
-- Elements: 0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
-- Objects:  0xa0074136173DfFa94bB1d7885A43Cbd291884A39
-- Sale:     0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
-- ERC20:    0x2b721B6748c84AD9B58BAb5F8CbE7CcAD4e9F246
+- Elements: 0xdDa89E273f83CD183c45230b9a8444857BE75dB9
+- Objects:  0xc931fb1EF7F02eaE2B8e83E9580711d20Ed5Bbd7
+- Sale:     0x9DA8d0f7f4eA86A41be2D651723975094305dE78
+- ERC20:    0x349F302d547984752ec86a7F7b56AE87975Cde7a
   - Decimals: 18
 
 ### [ETH Sepolia](https://sepolia.etherscan.io) - [Faucet](https://faucet.sepolia.dev/)
-- Elements: 0xa0074136173DfFa94bB1d7885A43Cbd291884A39
-- Objects:  0x2674F116d2d2b73AEbc625ed368F378e831A3BA8
-- Sale:     0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
-- ERC20:    0xAbC2EAFC19671c5704d5b0eCE78934a962E0366F
+- Elements: 0x0148fc0e3606D36ec60262792fd5EFeC2366E36f
+- Objects:  0x9DA8d0f7f4eA86A41be2D651723975094305dE78
+- Sale:     0xD6222F2A346C73956b0Ca35648F007e2338AD8FF
+- ERC20:    0xdDa89E273f83CD183c45230b9a8444857BE75dB9
   - Decimals: 6
 
 ### [Polygon Mumbai](https://mumbai.polygonscan.com) - [Faucet](https://faucet.polygon.technology/)
-- Elements: 0xa0074136173DfFa94bB1d7885A43Cbd291884A39
-- Objects:  0x2674F116d2d2b73AEbc625ed368F378e831A3BA8
-- Sale:     0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
-- ERC20:    0xAbC2EAFC19671c5704d5b0eCE78934a962E0366F
+- Elements: 0xc931fb1EF7F02eaE2B8e83E9580711d20Ed5Bbd7
+- Objects:  0x349F302d547984752ec86a7F7b56AE87975Cde7a
+- Sale:     0xdDa89E273f83CD183c45230b9a8444857BE75dB9
+- ERC20:    0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
   - Decimals: 6
