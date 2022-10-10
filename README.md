@@ -14,7 +14,6 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 6
 
 ### [BSC Mainnet](https://bscscan.com)
-*UNCONFIGURED*
 - Elements: 0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
 - Objects:  0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
 - Sale:     0x349F302d547984752ec86a7F7b56AE87975Cde7a
@@ -24,7 +23,6 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 18
 
 ### [ETH Mainnet](https://etherscan.io)
-*UNCONFIGURED*
 - Elements: 0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
 - Objects:  0xa0074136173DfFa94bB1d7885A43Cbd291884A39
 - Sale:     0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
@@ -34,7 +32,6 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 6
 
 ### [Polygon Mainnet](https://polygonscan.com)
-*UNCONFIGURED*
 - Elements: 0x2674F116d2d2b73AEbc625ed368F378e831A3BA8
 - Objects:  0xcCB7DF3f5120Eed7081225Fb60731f9887D373ce
 - Sale:     0xa0074136173DfFa94bB1d7885A43Cbd291884A39
