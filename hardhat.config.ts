@@ -23,6 +23,18 @@ const config: HardhatUserConfig = {
       url: "https://api.avax.network/ext/bc/C/rpc",
       accounts: [TEST_KEY || ""]
     },
+    bsc: {
+      url: "https://1rpc.io/bnb",
+      accounts: [TEST_KEY || ""]
+    },
+    eth: {
+      url: "https://rpc.ankr.com/eth",
+      accounts: [TEST_KEY || ""]
+    },
+    polygon: {
+      url: "https://polygon-rpc.com",
+      accounts: [TEST_KEY || ""]
+    },
     // TESTNETS
     "avax-fuji": {
       url: "https://api.avax-test.network/ext/bc/C/rpc",

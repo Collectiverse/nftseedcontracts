@@ -10,6 +10,9 @@ async function main() {
   const objects = await ethers.getContractAt("TestNFT", "0xc931fb1EF7F02eaE2B8e83E9580711d20Ed5Bbd7");
   const sale = await ethers.getContractAt("TestSeedSale", "0x9DA8d0f7f4eA86A41be2D651723975094305dE78");
 
+  await elements.grantRole("0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929", sale.address);
+  await objects.grantRole("0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929", sale.address);
+
   console.log("TEST DEPLOYMENT LIVE");
   console.log("ERC20   :", erc20);
   console.log("Elements:", elements.address);

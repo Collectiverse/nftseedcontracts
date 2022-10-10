@@ -45,9 +45,9 @@ contract CollectiverseSeedSale is Ownable, EIP712 {
         objects = _objects;
         signer = _signer;
 
-        erc20 = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-        wallet = 0x13416D5f9F25794897f40B18a0BF49a1E1633e86;
-        _transferOwnership(0x13416D5f9F25794897f40B18a0BF49a1E1633e86);
+        erc20 = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
+        wallet = 0xbBD6d148C8A8bdaFdBB704e0fB4A1E2be389a314;
+        _transferOwnership(0xbBD6d148C8A8bdaFdBB704e0fB4A1E2be389a314);
 
         // 50 usdc
         minimumPrice = 50000000;

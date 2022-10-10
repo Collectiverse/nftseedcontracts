@@ -19,7 +19,7 @@ contract CollectiverseNFT is
         __ERC1155Supply_init_unchained();
         _grantRole(
             DEFAULT_ADMIN_ROLE,
-            0x13416D5f9F25794897f40B18a0BF49a1E1633e86
+            0xbBD6d148C8A8bdaFdBB704e0fB4A1E2be389a314
         );
     }
 

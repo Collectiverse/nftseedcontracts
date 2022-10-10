@@ -14,7 +14,10 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 6
 
 ### [BSC Mainnet](https://bscscan.com)
-*TBD*
+*UNCONFIGURED*
+- Elements: 0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
+- Objects:  0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
+- Sale:     0x349F302d547984752ec86a7F7b56AE87975Cde7a
 - Multisig: 0xf65755190AbC2037d10A7543FE435f54822859e7
 - ERC20:    0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56
   - Name:     BUSD
@@ -28,7 +31,10 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 6
 
 ### [Polygon Mainnet](https://polygonscan.com)
-*TBD*
+*UNCONFIGURED*
+- Elements: 0x2674F116d2d2b73AEbc625ed368F378e831A3BA8
+- Objects:  0xcCB7DF3f5120Eed7081225Fb60731f9887D373ce
+- Sale:     0xa0074136173DfFa94bB1d7885A43Cbd291884A39
 - Multisig: 0xbBD6d148C8A8bdaFdBB704e0fB4A1E2be389a314
 - ERC20:    0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
   - Name:     USDC (PoS)
