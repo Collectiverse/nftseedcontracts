@@ -9,14 +9,20 @@ async function main() {
   const objects = await upgrades.deployProxy(Objects, ["https://ipfs.io//ipfs/QmQ3WbpWxe3arEa6behBjejE6LXdkESDXsr7N9bpAchVdo/{id}.json"]);
   await objects.deployed();
 
+  console.log("Objects :", objects.address);
+
   const Elements = await ethers.getContractFactory("CollectiverseNFT");
   const elements = await upgrades.deployProxy(Elements, ["https://ipfs.io/ipfs/QmXDUFYMspQnfZgXay2TRDXZxVMQ7pJ6UUksxxtWVMrfhU/{id}.json"]);
   await elements.deployed();
+
+  console.log("Elements:", elements.address);
 
   const Sale = await ethers.getContractFactory("CollectiverseSeedSale");
   // elements, objects, signer
   const sale = await Sale.deploy(elements.address, objects.address, signer);
   await sale.deployed();
+
+  console.log("Sale    :", sale.address);
 
   console.log("DEPLOYMENT SUCCESSFUL");
   console.log("Elements:", elements.address);

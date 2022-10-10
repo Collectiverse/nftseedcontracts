@@ -33,7 +33,7 @@
     "test": "hardhat test",
     "compile": "hardhat compile",
     "node": "hardhat node",
-    "deploy-live": "hardhat run --network eth scripts/deploy-live.js",
+    "deploy-live-xxx": "hardhat run --network eth scripts/deploy-live.js",
     "deploy-test-local": "hardhat run --network localhost scripts/deploy-test.js",
     "deploy-test-avax": "hardhat run --network avax-fuji scripts/deploy-test.js",
     "deploy-test-bsc": "hardhat run --network bsc-testnet scripts/deploy-test.js",

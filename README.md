@@ -24,7 +24,10 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
   - Decimals: 18
 
 ### [ETH Mainnet](https://etherscan.io)
-*TBD*
+*UNCONFIGURED*
+- Elements: 0x388A5b3a6220E7e88A3021cfC50c05C6C5Ea90bB
+- Objects:  0xa0074136173DfFa94bB1d7885A43Cbd291884A39
+- Sale:     0xAfda93b664d0255B17495eF252e7E59de6C94Fa4
 - Multisig: 0x13416D5f9F25794897f40B18a0BF49a1E1633e86
 - ERC20:    0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
   - Name:     USDC
