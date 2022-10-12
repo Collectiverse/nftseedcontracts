@@ -1,14 +1,16 @@
 const { ethers, upgrades } = require("hardhat");
 
-const erc20 = "0xFeD8D59b083AB4AC3FCBB8C5b6d89579bB637Ab9";
+const erc20 = "0xEA2Aa82E154e57D848076259816c511bc3A98658";
 const signer = "0x2b793e780460C88c78057bB6635A1F93d3c1a660";
 
 async function main() {
   const deployer = await ethers.getSigner();
 
-  const elements = await ethers.getContractAt("CollectiverseNFT", "0xE58Aa1081fff34b97abb64b7552c41edEBE313fF");
-  const objects = await ethers.getContractAt("CollectiverseNFT", "0xF87A8358cddc11604153d797A162d8bc9ca32EFb");
-  const sale = await ethers.getContractAt("CollectiverseSeedSale", "0xfbE32fdEf555Fe8A80C716D9431B19dc2A221a62");
+  const elements = await ethers.getContractAt("CollectiverseNFT", "0xe6E05aE821f81B20b29238D214f21f4334657084");
+  const objects = await ethers.getContractAt("CollectiverseNFT", "0x39FfbeCe8f38C07b98d5CE9a697636af7De90665");
+  const sale = await ethers.getContractAt("CollectiverseSeedSale", "0x24c91b57B10ADF1E8087014025571b8eECb3904A");
+
+  console.log(await sale.erc20())
 
   console.log("TEST DEPLOYMENT LIVE");
   console.log("ERC20   :", erc20);

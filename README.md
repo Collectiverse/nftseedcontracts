@@ -47,10 +47,10 @@ All data relating to the Collectiverse Seed Contracts is stored in this reposito
 - Deployer: 0x0000d468Bc1Db5f25b2C2D9E38658563A97781f1
 
 ### [Avalanche Fuji](https://testnet.snowtrace.io) - [Faucet](https://faucet.avax-test.network)
-- Elements: 0xE58Aa1081fff34b97abb64b7552c41edEBE313fF
-- Objects:  0xF87A8358cddc11604153d797A162d8bc9ca32EFb
-- Sale:     0xfbE32fdEf555Fe8A80C716D9431B19dc2A221a62
-- ERC20:    0xFeD8D59b083AB4AC3FCBB8C5b6d89579bB637Ab9
+- Elements: 0xe6E05aE821f81B20b29238D214f21f4334657084
+- Objects:  0x39FfbeCe8f38C07b98d5CE9a697636af7De90665
+- Sale:     0x24c91b57B10ADF1E8087014025571b8eECb3904A
+- ERC20:    0xEA2Aa82E154e57D848076259816c511bc3A98658
   - Decimals: 6
 
 ### [BSC Testnet](https://testnet.bscscan.com) - [Faucet](https://testnet.binance.org/faucet-smart)

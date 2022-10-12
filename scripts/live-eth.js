@@ -10,6 +10,9 @@ async function main() {
   console.log(await elements.getRoleMember("0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929", 0))
   console.log(await objects.getRoleMember("0x97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b929", 0))
 
+  console.log(await sale.minimumPrice()) // 50000000
+  console.log(await sale.maximumPrice()) // 5000000000
+
   console.log("DEPLOYMENT LIVE");
   console.log("Elements:", elements.address);
   console.log("Objects :", objects.address);
